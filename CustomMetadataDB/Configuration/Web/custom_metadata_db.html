@@ -1,0 +1,45 @@
+<div is="emby-scroller" class="view flex flex-direction-column scrollFrameY flex-grow" data-horizontal="false"
+    data-forcescrollbar="true" data-centerfocus="true" data-bindheader="true" data-controller="__plugin/CMetadataDBjs"
+    data-title="Custom Metadata agent">
+    <div
+        class="scrollSlider flex-grow flex-direction-column padded-left padded-left-page padded-right padded-top-page padded-bottom-page">
+        <form class="auto-center">
+            <div class="inputContainer">
+                <input is="emby-input" type="text" id="ApiUrl" required="required"
+                    label="URL for the custom database." />
+                <div class="fieldDescription">
+                    The plugin require simple JSON response with the at least these minimal structure for complete
+                    List of possible fields see the the DTO object.
+                    <br>
+                    <code style="white-space: pre;">
+[
+    {
+        "id": "unique id for example jf-1234",
+        "title": "The Presented title",
+        "matcher": [
+            "List of possible folder names to match",
+        ],
+    }
+    ,...
+]
+                    </code>
+                </div>
+            </div>
+
+            <div class="inputContainer">
+                <input is="emby-input" type="text" id="ApiRefUrl" required="required"
+                    label="URL for the database reference." />
+                <div class="fieldDescription">
+                    The url for database reference for example:
+                    <br>
+                    <code>https://www.thetvdb.com/?tab=series&id={0}</code>
+                    <br>
+                    Notice the <b>{0}</b> it must exists on the url as it will be replaced with given id.
+                </div>
+            </div>
+            <div>
+                <button is="emby-button" type="submit" class="raised button-submit block"><span>${Save}</span></button>
+            </div>
+        </form>
+    </div>
+</div>

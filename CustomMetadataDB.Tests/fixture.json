@@ -1,0 +1,58 @@
+[
+    {
+        "id": "jp-814d9672e1",
+        "title": "Show Title 1",
+        "matcher": [
+            "Show Title 1",
+            "Show Title One"
+        ],
+        "description": "Show desc ST1",
+        "actors": [
+            {
+                "name": "Actor ST1 1",
+                "role": "Role ST1 1"
+            },
+            {
+                "name": "Actor ST1 2",
+                "role": "Role ST1 2"
+            }
+        ],
+        "genres": [
+            "Genre ST1 1",
+            "Genre ST1 2",
+            "Genre ST1 3"
+        ],
+        "studio": "Studio name ST1",
+        "ratingguide": "TV-14",
+        "rating": 7.0,
+        "premiere": "2023-11-07"
+    },
+    {
+        "id": "jp-814d9672e2",
+        "title": "Show Title 2",
+        "matcher": [
+            "Show Title Two",
+            "Show Title 2"
+        ],
+        "description": "Show desc ST2",
+        "actors": [
+            {
+                "name": "Actor ST2 1",
+                "role": "Role ST2 1"
+            },
+            {
+                "name": "Actor ST2 2",
+                "role": "Role ST2 2"
+            }
+        ],
+        "genres": [
+            "Genre ST2 1",
+            "Genre ST2 2",
+            "Genre ST2 3"
+        ],
+        "studio": "Studio name ST2",
+        "ratingguide": "TV-14",
+        "rating": 7.0,
+        "premiere": "2023-11-08"
+    }
+]
