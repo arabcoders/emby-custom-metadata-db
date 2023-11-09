@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 using System.Web;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Common.Net;
+using System.Net;
+using System.Text.Json;
+using MediaBrowser.Model.Entities;
+using System.Net.Http;
 
 namespace CustomMetadataDB
 {
@@ -50,14 +54,60 @@ namespace CustomMetadataDB
             apiUrl += string.IsNullOrEmpty(new Uri(apiUrl).Query) ? "?" : "&";
             apiUrl += $"type={type}&limit={limit}&&query={HttpUtility.UrlEncode(name)}";
 
-            return _httpClient.SendAsync(new HttpRequestOptions
+            return _httpClient.SendAsync(new MediaBrowser.Common.Net.HttpRequestOptions
             {
                 Url = apiUrl,
                 BufferContent = false,
                 CancellationToken = cancellationToken,
             }, "GET");
         }
-        public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(E searchInfo, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(E searchInfo, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            _logger.Debug($"CMD Series GetMetadata: {searchInfo.Name}");
+
+            var result = new List<RemoteSearchResult>();
+
+            try
+            {
+                using var httpResponse = await QueryAPI("series", searchInfo.Name, cancellationToken, limit: 20).ConfigureAwait(false);
+
+                if (httpResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.Info($"CMD Series GetMetadata: {searchInfo.Name} - Status Code: {httpResponse.StatusCode}");
+                    return result;
+                }
+
+                DTO[] seriesRootObject = await JsonSerializer.DeserializeAsync<DTO[]>(
+                                 utf8Json: httpResponse.Content,
+                                 options: Utils.JSON_OPTS,
+                                 cancellationToken: cancellationToken
+                             ).ConfigureAwait(false);
+
+
+                foreach (var series in seriesRootObject)
+                {
+                    result.Add(new RemoteSearchResult
+                    {
+                        Name = series.Title,
+                        ProviderIds = new ProviderIdDictionary(new Dictionary<string, string> { { Constants.PLUGIN_EXTERNAL_ID, series.Id } }),
+                    });
+                }
+
+                _logger.Debug($"CMD Series GetMetadata Result: {result}");
+                return result;
+            }
+            catch (HttpRequestException exception)
+            {
+                if (exception.StatusCode.HasValue && exception.StatusCode.Value == HttpStatusCode.NotFound)
+                {
+                    return result;
+                }
+
+                throw;
+            }
+        }
         public Task<HttpResponseInfo> GetImageResponse(string url, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 }

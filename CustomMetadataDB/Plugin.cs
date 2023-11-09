@@ -9,6 +9,7 @@ namespace CustomMetadataDB
     public class Plugin : BasePlugin, IHasWebPages
     {
         public override string Name => Constants.PLUGIN_NAME;
+        public override string Description => Constants.PLUGIN_DESCRIPTION;
         public override Guid Id => Guid.Parse(Constants.PLUGIN_GUID);
 
         public IEnumerable<PluginPageInfo> GetPages()

@@ -10,7 +10,7 @@ namespace CustomMetadataDB
     {
         public bool Supports(IHasProviderIds item) => item is Series;
         public string Name => Constants.PLUGIN_NAME;
-        public string Key => Constants.PLUGIN_NAME;
+        public string Key => Constants.PLUGIN_EXTERNAL_ID;
         public string UrlFormatString { get; set; }
 
         public SeriesExternalId(IServerConfigurationManager config)
