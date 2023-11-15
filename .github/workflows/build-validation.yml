@@ -1,6 +1,17 @@
-name: Publish Package
+name: Building
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
   push:
     tags:
       - "*"
@@ -15,19 +26,20 @@ jobs:
     needs: Tests
     name: build_package
     runs-on: ubuntu-latest
-
+    permissions:
+      packages: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: restore cached dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@3
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -48,17 +60,16 @@ jobs:
         run: |
           tag=$(git describe --tags --always)
           release_name="CustomMetadataDB-${tag}"
-
-          # Pack files
+          # Pack files.
           7z a -tzip "${release_name}.zip" "./bin/CustomMetadataDB.dll"
-          echo "::set-output name=release_name::${release_name}"
-          echo "::set-output name=release_tag::${tag}"
-          echo "::set-output name=filename::${release_name}.zip"
-
+          # Create tags.
+          echo "release_name=${release_name}" >> "$GITHUB_OUTPUT"
+          echo "release_tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "filename=${release_name}.zip" >> "$GITHUB_OUTPUT"
       - name: Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          repo_token: "${{ secrets.GH_TOKEN }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           title: "${{ steps.create_package.outputs.release_tag }}"
           automatic_release_tag: "${{ steps.create_package.outputs.release_tag }}"
           prerelease: true
