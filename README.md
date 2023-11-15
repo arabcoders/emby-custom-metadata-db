@@ -1,5 +1,8 @@
 # Custom Metadata DB
 
+![Build Status](https://github.com/ArabCoders/emby-custom-metadata-db/actions/workflows/build-validation.yml/badge.svg)
+![MIT License](https://img.shields.io/github/license/ArabCoders/emby-custom-metadata-db.svg)
+
 This project is to make a custom database for my custom shows. You can clone and change what's needed to make it work for your use case.
 
 # Server code 
