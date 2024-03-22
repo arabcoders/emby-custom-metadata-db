@@ -66,5 +66,33 @@ namespace CustomMetadataDB.Tests
 
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void Test_file_to_info()
+        {
+            var path = "/home/media/test/201012 foobar ep24 - ahmed [foo].mkv";
+            var item = Utils.FileToInfo(path, new DateTime(2021, 1, 1, 01, 02, 03, DateTimeKind.Utc));
+            Assert.Equal(110120203, item.IndexNumber);
+            Assert.Equal(202010, item.ParentIndexNumber);
+            Assert.Equal(2020, item.Year);
+            Assert.Equal("ep24 - ahmed", item.Name);
+            Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
+        }
+
+        [Fact]
+        public void Test_ToEpisode()
+        {
+            var path = "/home/media/test/201012 foobar ep24 - ahmed [foo].mkv";
+            var result = Utils.ToEpisode(Utils.FileToInfo(path, new DateTime(2021, 1, 1, 01, 02, 03, DateTimeKind.Utc)));
+
+            Assert.True(result.HasMetadata);
+
+            var item = result.Item;
+
+            Assert.Equal(110120203, item.IndexNumber);
+            Assert.Equal(202010, item.ParentIndexNumber);
+            Assert.Equal("ep24 - ahmed", item.Name);
+            Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
+        }
     }
 }
