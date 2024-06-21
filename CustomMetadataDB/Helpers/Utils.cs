@@ -125,7 +125,7 @@ namespace CustomMetadataDB.Helpers
             string episode = matcher.Groups["episode"].Success ? matcher.Groups["episode"].Value : "";
 
             string season = matcher.Groups["season"].Success ? matcher.Groups["season"].Value : "";
-            season = season == "" ? year + month : season;
+            season = season == "" ? year : season;
 
             string broadcastDate = (year != "" && month != "" && day != "") ? year + "-" + month + "-" + day : "";
             if (broadcastDate == "" && file_date != null)

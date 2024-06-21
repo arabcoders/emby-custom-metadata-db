@@ -73,7 +73,7 @@ namespace CustomMetadataDB.Tests
             var path = "/home/media/test/201012 foobar ep24 - ahmed [foo].mkv";
             var item = Utils.FileToInfo(path, new DateTime(2021, 1, 1, 01, 02, 03, DateTimeKind.Utc));
             Assert.Equal(110120203, item.IndexNumber);
-            Assert.Equal(202010, item.ParentIndexNumber);
+            Assert.Equal(2020, item.ParentIndexNumber);
             Assert.Equal(2020, item.Year);
             Assert.Equal("ep24 - ahmed", item.Name);
             Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
@@ -90,7 +90,7 @@ namespace CustomMetadataDB.Tests
             var item = result.Item;
 
             Assert.Equal(110120203, item.IndexNumber);
-            Assert.Equal(202010, item.ParentIndexNumber);
+            Assert.Equal(2020, item.ParentIndexNumber);
             Assert.Equal("ep24 - ahmed", item.Name);
             Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
         }
