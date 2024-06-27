@@ -30,7 +30,7 @@ namespace CustomMetadataDB.Helpers
 
         public static PersonInfo CreatePerson(string name, string provider_id)
         {
-            return new PersonInfo
+            return new()
             {
                 Name = name,
                 Type = PersonType.Director,
@@ -86,11 +86,7 @@ namespace CustomMetadataDB.Helpers
                 item.ProductionYear = int.Parse(date.ToString("yyyy"));
             }
 
-            return new MetadataResult<Series>
-            {
-                HasMetadata = true,
-                Item = item
-            };
+            return new() { HasMetadata = true, Item = item };
         }
 
         public static EpisodeInfo FileToInfo(string file, DateTime? file_date = null)
@@ -168,7 +164,7 @@ namespace CustomMetadataDB.Helpers
                 // get the modified date of the file
                 if (System.IO.File.Exists(file) || file_date != null)
                 {
-                    episode += (file_date ?? System.IO.File.GetLastWriteTimeUtc(file)).ToString("mmss");
+                    episode += (file_date ?? System.IO.File.GetCreationTimeUtc(file)).ToString("mmss");
                 }
             }
 
@@ -189,6 +185,14 @@ namespace CustomMetadataDB.Helpers
             {
                 item.PremiereDate = new DateTime(int.Parse(year), int.Parse(month), int.Parse(day));
             }
+
+            if (!item.IndexNumber.HasValue || item.IndexNumber.GetValueOrDefault() == 0)
+            {
+                Logger?.Error($"No episode number found for '{file}'.");
+                return new EpisodeInfo();
+            }
+
+            Logger?.Info($"Parsed '{System.IO.Path.GetFileName(file)}' as 'S{item.ParentIndexNumber}E{item.IndexNumber}' - {item.Name}'.");
 
             return item;
         }
@@ -214,21 +218,19 @@ namespace CustomMetadataDB.Helpers
             {
                 item.PremiereDate = time;
                 item.ProductionYear = time.Year;
+                try
+                {
+                    item.SortName = $"{time.Year}{time.Month:D2}{time.Day:D2}-{item.IndexNumber:D2} - {item.Name}";
+                }
+                catch { }
             }
 
             item.SetProviderId(Constants.PLUGIN_EXTERNAL_ID, data.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
 
-            return new MetadataResult<Episode> { HasMetadata = true, Item = item };
+            return new() { HasMetadata = true, Item = item };
         }
 
-        private static MetadataResult<Series> ErrorOut()
-        {
-            return new MetadataResult<Series> { HasMetadata = false, Item = new Series() };
-        }
-
-        private static MetadataResult<Episode> ErrorOutEpisode()
-        {
-            return new MetadataResult<Episode> { HasMetadata = false, Item = new Episode() };
-        }
+        private static MetadataResult<Series> ErrorOut() => new() { HasMetadata = false, Item = new Series() };
+        private static MetadataResult<Episode> ErrorOutEpisode() => new() { HasMetadata = false, Item = new Episode() };
     }
 }

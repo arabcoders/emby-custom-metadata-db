@@ -20,13 +20,14 @@ public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMo
     public EpisodeProvider(ILogger logger)
     {
         _logger = logger;
+        Utils.Logger = logger;
     }
 
     public Task<MetadataResult<Episode>> GetMetadata(ItemInfo info, LibraryOptions libraryOptions, IDirectoryService directoryService, CancellationToken cancellationToken)
     {
         var result = new MetadataResult<Episode>();
 
-       cancellationToken.ThrowIfCancellationRequested();
+        cancellationToken.ThrowIfCancellationRequested();
 
         _logger.Debug($"CMD Episode GetMetadata Lookup: '{info.Name}' '({info.Path})'");
 
@@ -43,14 +44,20 @@ public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMo
 
     public bool HasChanged(BaseItem item, LibraryOptions libraryOptions, IDirectoryService directoryService)
     {
-        _logger.Debug($"CMD HasChanged: Checking {item.Path}");
-
         FileSystemMetadata fileInfo = directoryService.GetFile(item.Path);
-        bool result = fileInfo.Exists && fileInfo.LastWriteTimeUtc.ToUniversalTime() > item.DateLastSaved.ToUniversalTime();
-        string status = result ? "Has Changed" : "Has Not Changed";
 
-        _logger.Debug($"CMD HasChanged Result: {status}");
+        if (!fileInfo.Exists)
+        {
+            _logger.Warn($"'{item.Path}' not found.");
+            return true;
+        }
 
-        return result;
+        if (fileInfo.LastWriteTimeUtc.ToUniversalTime() > item.DateLastSaved.ToUniversalTime())
+        {
+            _logger.Debug($"CMD HasChanged: '{item.Path}' has changed.");
+            return true;
+        }
+
+        return false;
     }
 }
