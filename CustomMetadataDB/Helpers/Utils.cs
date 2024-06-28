@@ -175,7 +175,7 @@ namespace CustomMetadataDB.Helpers
                 IndexNumber = int.Parse(episode),
                 Name = title,
                 Year = "" != year ? int.Parse(year) : null,
-                ParentIndexNumber = int.Parse(season)
+                ParentIndexNumber = "" == season ? 1 : int.Parse(season)
             };
 
             item.SetProviderId(Constants.PLUGIN_EXTERNAL_ID, item.IndexNumber.ToString());
