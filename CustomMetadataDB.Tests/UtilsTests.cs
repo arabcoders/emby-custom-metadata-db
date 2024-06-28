@@ -94,5 +94,21 @@ namespace CustomMetadataDB.Tests
             Assert.Equal("ep24 - ahmed", item.Name);
             Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
         }
+
+        [Fact]
+        public void Test_toStandard_Naming()
+        {
+            var path = "/home/media/Show Title/Season 01/Show Title - S01E02 - episode title [foo].mkv";
+            var result = Utils.ToEpisode(Utils.FileToInfo(path));
+
+            Assert.True(result.HasMetadata);
+
+            var item = result.Item;
+
+            Assert.Equal(2, item.IndexNumber);
+            Assert.Equal(1, item.ParentIndexNumber);
+            Assert.Equal("episode title", item.Name);
+            Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
+        }
     }
 }

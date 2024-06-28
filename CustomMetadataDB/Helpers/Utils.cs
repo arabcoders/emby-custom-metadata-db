@@ -174,7 +174,7 @@ namespace CustomMetadataDB.Helpers
             {
                 IndexNumber = int.Parse(episode),
                 Name = title,
-                Year = int.Parse(year),
+                Year = "" != year ? int.Parse(year) : null,
                 ParentIndexNumber = int.Parse(season)
             };
 
@@ -224,6 +224,15 @@ namespace CustomMetadataDB.Helpers
                 }
                 catch { }
             }
+
+            try
+            {
+                if (string.IsNullOrEmpty(item.SortName))
+                {
+                    item.SortName = $"{item.ParentIndexNumber:0000}{item.IndexNumber:0000} - {item.Name}";
+                }
+            }
+            catch { }
 
             item.SetProviderId(Constants.PLUGIN_EXTERNAL_ID, data.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
 

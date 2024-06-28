@@ -16,7 +16,9 @@ namespace CustomMetadataDB.Helpers
             // title YY?YY(-._)MM(-._)DD at end of filename.
             new(@"(?<title>.+?)(?<year>\d{2,4})(\-|\.|_)?(?<month>\d{2})(\-|\.|_)?(?<day>\d{2})$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             // series - YY?YY(-._)MM(-._)DD -? title
-            new(@"(?<series>.+?)(?<year>\d{2,4})(\-|\.|_)?(?<month>\d{2})(\-|\.|_)?(?<day>\d{2})\s?-?(?<title>.+)?", RegexOptions.Compiled | RegexOptions.IgnoreCase)
+            new(@"(?<series>.+?)(?<year>\d{2,4})(\-|\.|_)?(?<month>\d{2})(\-|\.|_)?(?<day>\d{2})\s?-?(?<title>.+)?", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            // series - SXXEYY - title
+            new(@"^(?<series>.+?)[Ss](?<season>[0-9]{1,})[Ee](?<episode>[0-9]{1,})\s?-?(?<title>.+)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
     }
 }
