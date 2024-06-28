@@ -20,7 +20,7 @@ namespace CustomMetadataDB.Helpers
             // series - SXXEYY - title
             new(@"^(?<series>.+?)[Ss](?<season>[0-9]{1,})[Ee](?<episode>[0-9]{1,})\s?-?(?<title>.+)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             // Title ep0000
-            new(@"^(?<title>.+?)\s?[Ee][Pp](?<episode>[0-9]{1,4})$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new(@"^(?<title>.+?)\s?[Ee][Pp](?<episode>[0-9]{1,4})", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
     }
 }

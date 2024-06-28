@@ -95,35 +95,22 @@ namespace CustomMetadataDB.Tests
             Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
         }
 
-        [Fact]
-        public void Test_toStandard_Naming()
+
+        [Theory]
+        [InlineData("Show Title - S01E66 - episode title [foo].mkv")]
+        [InlineData("episode title ep066 [DVD].mkv")]
+        public void Test_toStandard_Naming(string filename)
         {
-            var path = "/home/media/Show Title/Season 01/Show Title - S01E02 - episode title [foo].mkv";
+            var path = $"/home/media/Show Title/Season 01/{filename}";
             var result = Utils.ToEpisode(Utils.FileToInfo(path));
 
             Assert.True(result.HasMetadata);
 
             var item = result.Item;
 
-            Assert.Equal(2, item.IndexNumber);
+            Assert.Equal(66, item.IndexNumber);
             Assert.Equal(1, item.ParentIndexNumber);
             Assert.Equal("episode title", item.Name);
-            Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
-        }
-        
-        [Fact]
-        public void Test_toStandard_Naming2()
-        {
-            var path = "/home/media/Show Title/Season 01/Show Title ep02.mkv";
-            var result = Utils.ToEpisode(Utils.FileToInfo(path));
-
-            Assert.True(result.HasMetadata);
-
-            var item = result.Item;
-
-            Assert.Equal(2, item.IndexNumber);
-            Assert.Equal(1, item.ParentIndexNumber);
-            Assert.Equal("Show Title", item.Name);
             Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
         }
     }
