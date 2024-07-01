@@ -113,5 +113,22 @@ namespace CustomMetadataDB.Tests
             Assert.Equal("episode title", item.Name);
             Assert.Equal($"{item.IndexNumber}", item.ProviderIds[Constants.PLUGIN_EXTERNAL_ID]);
         }
+        
+        [Theory]
+        [InlineData("Show Title - S01E66-E67 - episode title [foo].mkv", 67)]
+        [InlineData("episode title ep066-ep100 [DVD].mkv", 100)]
+        public void Test_toStandard_Naming_Multi(string filename, int indexEnd)
+        {
+            var path = $"/home/media/Show Title/Season 01/{filename}";
+            var result = Utils.ToEpisode(Utils.FileToInfo(path));
+
+            Assert.True(result.HasMetadata);
+
+            var item = result.Item;
+
+            Assert.Equal(66, item.IndexNumber);
+            Assert.Equal(1, item.ParentIndexNumber);
+            Assert.Equal(indexEnd, item.IndexNumberEnd);
+        }
     }
 }

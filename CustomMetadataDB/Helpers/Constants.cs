@@ -22,5 +22,6 @@ namespace CustomMetadataDB.Helpers
             // Title ep0000
             new(@"^(?<title>.+?)\s?[Ee][Pp](?<episode>[0-9]{1,4})", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
+        public static readonly Regex MULTI_EPISODE_MATCHER = new(@"(EP?)(?<start>\d{1,4})-(EP?)?(?<end>\d{1,4})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     }
 }

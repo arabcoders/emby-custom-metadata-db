@@ -44,17 +44,25 @@ public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMo
 
     public bool HasChanged(BaseItem item, LibraryOptions libraryOptions, IDirectoryService directoryService)
     {
-        FileSystemMetadata fileInfo = directoryService.GetFile(item.Path);
-
-        if (!fileInfo.Exists)
+        try
         {
-            _logger.Warn($"'{item.Path}' not found.");
-            return true;
+            FileSystemMetadata fileInfo = directoryService.GetFile(item.Path);
+
+            if (!fileInfo.Exists)
+            {
+                _logger.Warn($"'{item.Path}' not found.");
+                return true;
+            }
+
+            if (fileInfo.CreationTimeUtc.ToUniversalTime() > item.DateLastSaved.ToUniversalTime())
+            {
+                _logger.Debug($"CMD HasChanged: '{item.Path}' has changed.");
+                return true;
+            }
         }
-
-        if (fileInfo.LastWriteTimeUtc.ToUniversalTime() > item.DateLastSaved.ToUniversalTime())
+        catch (Exception ex)
         {
-            _logger.Debug($"CMD HasChanged: '{item.Path}' has changed.");
+            _logger.Error($"CMD HasChanged: For path '{item.Path}' has failed. '{ex.Message}'. {ex}");
             return true;
         }
 
