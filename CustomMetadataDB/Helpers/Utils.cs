@@ -11,6 +11,9 @@ using System.Text.Json.Serialization;
 using System;
 using CustomMetadataDB.Helpers.Configuration;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
+using System.Text;
+using System.IO;
 
 namespace CustomMetadataDB.Helpers
 {
@@ -28,6 +31,7 @@ namespace CustomMetadataDB.Helpers
             return config.GetConfiguration<PluginConfiguration>(Constants.PLUGIN_NAME);
         }
 
+
         public static PersonInfo CreatePerson(string name, string provider_id)
         {
             return new()
@@ -36,6 +40,33 @@ namespace CustomMetadataDB.Helpers
                 Type = PersonType.Director,
                 ProviderIds = new ProviderIdDictionary(new Dictionary<string, string> { { Constants.PLUGIN_EXTERNAL_ID, provider_id } }),
             };
+        }
+        
+        public static int ExtendId(string path)
+        {
+            // 1. Get the basename, remove the extension, and convert to lowercase
+            string basename = Path.GetFileNameWithoutExtension(path).ToLower();
+
+            // 2. Hash the basename using SHA-256
+            using SHA256 sha256 = SHA256.Create();
+            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(basename));
+
+            // 3. Convert the SHA-256 hash to a hexadecimal string
+            string hex = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+            // 4. Convert hexadecimal characters to ASCII values
+            StringBuilder asciiValues = new StringBuilder();
+            foreach (char c in hex)
+            {
+                asciiValues.Append(((int)c).ToString());
+            }
+
+            // 5. Get the final 4 digits, ensure it's a 4-digit integer
+            string asciiString = asciiValues.ToString();
+            string fourDigitString = asciiString.Length >= 4 ? asciiString.Substring(0, 4) : asciiString.PadRight(4, '9');
+            int fourDigitNumber = int.Parse(fourDigitString);
+
+            return fourDigitNumber;
         }
 
         public static MetadataResult<Series> ToSeries(DTO data)
@@ -89,11 +120,11 @@ namespace CustomMetadataDB.Helpers
             return new() { HasMetadata = true, Item = item };
         }
 
-        public static EpisodeInfo FileToInfo(string file, DateTime? file_date = null)
+        public static EpisodeInfo FileToInfo(string file)
         {
 
             //-- get only the file stem
-            string filename = System.IO.Path.GetFileNameWithoutExtension(file);
+            string filename = Path.GetFileNameWithoutExtension(file);
 
             Match matcher = null;
 
@@ -124,10 +155,6 @@ namespace CustomMetadataDB.Helpers
             season = season == "" ? year : season;
 
             string broadcastDate = (year != "" && month != "" && day != "") ? year + "-" + month + "-" + day : "";
-            if (broadcastDate == "" && file_date != null)
-            {
-                broadcastDate = file_date?.ToString("yyyy-MM-dd") ?? "";
-            }
 
             string title = matcher.Groups["title"].Success ? matcher.Groups["title"].Value : "";
             if (title != "")
@@ -159,13 +186,7 @@ namespace CustomMetadataDB.Helpers
 
             if (episode == "")
             {
-                episode = "1" + month + day;
-
-                // get the modified date of the file
-                if (System.IO.File.Exists(file) || file_date != null)
-                {
-                    episode += (file_date ?? System.IO.File.GetCreationTimeUtc(file)).ToString("mmss");
-                }
+                episode = $"1{month}{day}{ExtendId(filename)}";
             }
 
             episode = (episode == "") ? int.Parse('1' + month + day).ToString() : episode;
@@ -210,7 +231,7 @@ namespace CustomMetadataDB.Helpers
             }
 
             var indexEnd = item.IndexNumberEnd.HasValue ? $"-E{item.IndexNumberEnd}" : "";
-            Logger?.Info($"Parsed '{System.IO.Path.GetFileName(file)}' as 'S{item.ParentIndexNumber}E{item.IndexNumber}{indexEnd}' - {item.Name}'.");
+            Logger?.Info($"Parsed '{Path.GetFileName(file)}' as 'S{item.ParentIndexNumber}E{item.IndexNumber}{indexEnd}' - {item.Name}'.");
 
             return item;
         }
