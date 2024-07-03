@@ -233,7 +233,7 @@ namespace CustomMetadataDB.Helpers
             }
 
             var indexEnd = item.IndexNumberEnd.HasValue ? $"-E{item.IndexNumberEnd}" : "";
-            Logger?.Info($"Parsed '{Path.GetFileName(file)}' as 'S{item.ParentIndexNumber}E{item.IndexNumber}{indexEnd}' - {item.Name}'.");
+            Logger?.Info($"Parsed '{Path.GetFileName(file)}' as 'S{item.ParentIndexNumber}E{item.IndexNumber}{indexEnd}': - '{item.Name}'.");
 
             return item;
         }
