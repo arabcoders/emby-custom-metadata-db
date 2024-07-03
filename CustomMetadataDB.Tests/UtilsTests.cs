@@ -99,6 +99,8 @@ namespace CustomMetadataDB.Tests
         [Theory]
         [InlineData("Show Title - S01E66 - episode title [foo].mkv")]
         [InlineData("episode title ep066 [DVD].mkv")]
+        [InlineData("S01E66 episode title [foo].mkv")]
+
         public void Test_toStandard_Naming(string filename)
         {
             var path = $"/home/media/Show Title/Season 01/{filename}";
