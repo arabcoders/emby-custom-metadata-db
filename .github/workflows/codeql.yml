@@ -4,7 +4,6 @@ on:
   push:
     branches: ["master"]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: ["master"]
 
 jobs:
@@ -24,18 +23,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@letest
         with:
           languages: ${{ matrix.language }}
-         
+
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@letest
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@letest
         with:
           category: "/language:${{matrix.language}}"

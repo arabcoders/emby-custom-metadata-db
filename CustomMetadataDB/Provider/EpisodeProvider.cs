@@ -9,7 +9,7 @@ using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.IO;
 
-namespace CustomMetadataDB;
+namespace CustomMetadataDB.Provider;
 
 public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMonitor
 {

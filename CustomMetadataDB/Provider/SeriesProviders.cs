@@ -2,7 +2,6 @@ using CustomMetadataDB.Helpers;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Providers;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using System.Text.Json;
 using MediaBrowser.Model.Entities;
 using System.Net.Http;
 
-namespace CustomMetadataDB;
+namespace CustomMetadataDB.Provider;
 
 public class SeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>
 {

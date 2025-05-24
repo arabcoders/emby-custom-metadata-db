@@ -3,7 +3,7 @@
 ![Build Status](https://github.com/ArabCoders/emby-custom-metadata-db/actions/workflows/build-validation.yml/badge.svg)
 ![License](https://img.shields.io/github/license/ArabCoders/emby-custom-metadata-db.svg)
 
-This is a plugin for [Emby Media Server](https://emby.media) that purely here to generate unique custom IDs for TV series. to work with 
+This is a plugin for [Emby Media Server](https://emby.media) that purely here to generate unique custom IDs for TV series. to work with
 my other two plugins for [Jellyfin](https://github.com/arabcoders/jf-custom-metadata-db) and [Plex](https://github.com/arabcoders/cmdb.bundle).
 
 **This plugin require server that respond with a unique ID for a given TV series name in the following format.**

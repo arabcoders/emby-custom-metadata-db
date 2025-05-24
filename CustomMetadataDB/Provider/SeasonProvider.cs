@@ -10,7 +10,8 @@ using MediaBrowser.Model.Logging;
 using MediaBrowser.Common.Net;
 using System.Text.Json;
 
-namespace CustomMetadataDB;
+namespace CustomMetadataDB.Provider;
+
 public class SeasonProvider : IRemoteMetadataProvider<Season, SeasonInfo>
 {
     protected readonly ILogger _logger;
