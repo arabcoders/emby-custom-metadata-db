@@ -9,7 +9,7 @@ using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.IO;
 
-namespace CustomMetadataDB;
+namespace CustomMetadataDB.Provider;
 
 public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMonitor
 {
@@ -20,13 +20,14 @@ public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMo
     public EpisodeProvider(ILogger logger)
     {
         _logger = logger;
+        Utils.Logger = logger;
     }
 
     public Task<MetadataResult<Episode>> GetMetadata(ItemInfo info, LibraryOptions libraryOptions, IDirectoryService directoryService, CancellationToken cancellationToken)
     {
         var result = new MetadataResult<Episode>();
 
-       cancellationToken.ThrowIfCancellationRequested();
+        cancellationToken.ThrowIfCancellationRequested();
 
         _logger.Debug($"CMD Episode GetMetadata Lookup: '{info.Name}' '({info.Path})'");
 
@@ -43,14 +44,28 @@ public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMo
 
     public bool HasChanged(BaseItem item, LibraryOptions libraryOptions, IDirectoryService directoryService)
     {
-        _logger.Debug($"CMD HasChanged: Checking {item.Path}");
+        try
+        {
+            FileSystemMetadata fileInfo = directoryService.GetFile(item.Path);
 
-        FileSystemMetadata fileInfo = directoryService.GetFile(item.Path);
-        bool result = fileInfo.Exists && fileInfo.LastWriteTimeUtc.ToUniversalTime() > item.DateLastSaved.ToUniversalTime();
-        string status = result ? "Has Changed" : "Has Not Changed";
+            if (!fileInfo.Exists)
+            {
+                _logger.Warn($"'{item.Path}' not found.");
+                return true;
+            }
 
-        _logger.Debug($"CMD HasChanged Result: {status}");
+            if (fileInfo.CreationTimeUtc.ToUniversalTime() > item.DateLastSaved.ToUniversalTime())
+            {
+                _logger.Debug($"CMD HasChanged: '{item.Path}' has changed.");
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"CMD HasChanged: For path '{item.Path}' has failed. '{ex.Message}'. {ex}");
+            return true;
+        }
 
-        return result;
+        return false;
     }
 }

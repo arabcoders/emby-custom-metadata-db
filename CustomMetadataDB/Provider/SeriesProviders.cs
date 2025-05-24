@@ -2,7 +2,6 @@ using CustomMetadataDB.Helpers;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Providers;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using System.Text.Json;
 using MediaBrowser.Model.Entities;
 using System.Net.Http;
 
-namespace CustomMetadataDB;
+namespace CustomMetadataDB.Provider;
 
 public class SeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>
 {
@@ -52,7 +51,7 @@ public class SeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>
         {
             using var httpResponse = await QueryAPI("series", info.Name, cancellationToken).ConfigureAwait(false);
 
-            if (httpResponse.StatusCode != HttpStatusCode.OK)
+            if (HttpStatusCode.OK != httpResponse.StatusCode)
             {
                 _logger.Info($"CMD Series GetMetadata: {info.Name} - Status Code: {httpResponse.StatusCode}");
                 return result;
@@ -104,7 +103,7 @@ public class SeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>
         {
             using var httpResponse = await QueryAPI("series", searchInfo.Name, cancellationToken, limit: 20).ConfigureAwait(false);
 
-            if (httpResponse.StatusCode != HttpStatusCode.OK)
+            if (HttpStatusCode.OK != httpResponse.StatusCode)
             {
                 _logger.Info($"CMD Series GetMetadata: {searchInfo.Name} - Status Code: {httpResponse.StatusCode}");
                 return result;
@@ -131,7 +130,7 @@ public class SeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>
         }
         catch (HttpRequestException exception)
         {
-            if (exception.StatusCode.HasValue && exception.StatusCode.Value == HttpStatusCode.NotFound)
+            if (exception.StatusCode.HasValue && HttpStatusCode.NotFound == exception.StatusCode.Value)
             {
                 return result;
             }
