@@ -1,7 +1,7 @@
 ---
 name: "Custom metadata agent db"
 guid: "83b77e24-9fce-4ee0-a794-73fdfa972e66"
-version: "1.2.0.2"
+version: "1.2.1.0"
 targetAbi: "10.7.0.0"
 owner: "arabcoders"
 overview: "A Custom metadata agent."

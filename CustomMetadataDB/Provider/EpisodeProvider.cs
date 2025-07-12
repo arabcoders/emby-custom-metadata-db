@@ -39,7 +39,7 @@ public class EpisodeProvider : ILocalMetadataProvider<Episode>, IHasItemChangeMo
             return Task.FromResult(result);
         }
 
-        return Task.FromResult(Utils.ToEpisode(item));
+        return Task.FromResult(Utils.ToEpisode(item, info.Path));
     }
 
     public bool HasChanged(BaseItem item, LibraryOptions libraryOptions, IDirectoryService directoryService)
